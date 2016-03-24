@@ -118,9 +118,9 @@ class LCD:
 	def cursor_home(self):
 		self.cmd(settings['home'], settings['command'])					
 	
-	def cursor_move_direction(self, increment, cursor_shift_on_off):
+	def cursor_move_direction(self, increment_decrement, cursor_shift_on_off):
 		bits = settings['cursor_move_direction']
-		bits = bits | increment
+		bits = bits | increment_decrement
 		bits = bits | cursor_shift_on_off
 		self.cmd(bits, settings['command'])
 
