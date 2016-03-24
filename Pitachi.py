@@ -26,7 +26,7 @@ settings = {
 	'clear' : 0x01, 'home': 0x02, 'cursor_move_direction' : 0x04, 'enable_display_cursor' : 0x08, 
 	'move_cursor_shift_display' : 0x10, 'set_interface_length' : 0x20, 'set_CGRAM_address': 0x40, 'set_DDRAM_address': 0x80,
 	
-	'second_line' : 0xC0,
+	'second_line' : 0x40,
 	
 	'custom_character0': 0x00, 'custom_character1': 0x01, 'custom_character2': 0x02, 'custom_character3': 0x03, 
 	'custom_character4': 0x04, 'custom_character5': 0x05, 'custom_character6': 0x06, 'custom_character7': 0x07
