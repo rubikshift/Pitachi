@@ -5,8 +5,6 @@ import time
 
 #SETTINGS
 settings = {	
-	'display_width' : 16,
-	
 	'increment' : 0x02, 'decrement' : 0, 'cursor_shift_on' : 0x01, 'cursor_shift_off': 0, 
 	
 	'display_on' : 0x04, 'display_off' : 0, 'cursor_on' : 0x02, 'cursor_off': 0, 'cursor_blink_on' : 0x01, 'cursor_blink_off' : 0,
@@ -160,7 +158,7 @@ class LCD:
 		bits = bits | address
 		self.cmd(bits, settings['command'])
 
-	def cmd(self, bits, state, check_busy_flag = True):
+	def cmd(self, bits, state):
 		bits = bin(bits)[2:].zfill(8)
 		GPIO.output(self.pins['RS'], state)
 		if self.init['mode'] == settings['8bit']:
