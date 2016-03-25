@@ -5,22 +5,22 @@ import time
 
 #SETTINGS
 settings = {	
-	'increment' : 0x02, 'decrement' : 0, 'cursor_shift_on' : 0x01, 'cursor_shift_off': 0, 
+	'increment': 0x02, 'decrement': 0, 'cursor_shift_on': 0x01, 'cursor_shift_off': 0, 
 	
-	'display_on' : 0x04, 'display_off' : 0, 'cursor_on' : 0x02, 'cursor_off': 0, 'cursor_blink_on' : 0x01, 'cursor_blink_off' : 0,
+	'display_on': 0x04, 'display_off': 0, 'cursor_on': 0x02, 'cursor_off': 0, 'cursor_blink_on' : 0x01, 'cursor_blink_off' : 0,
 
-	'display_shift_on' : 0x04, 'display_shift_off' : 0, 'cursor_right' : 0x04, 'cursor_left' : 0,
+	'display_shift_on': 0x04, 'display_shift_off': 0, 'cursor_right': 0x04, 'cursor_left': 0,
 
-	'8bit' : 0x10, '4bit' : 0, 'two_lines' : 0x08, 'one_line': 0, 'font_5x10': 0x04, 'font_5x7': 0,
+	'8bit': 0x10, '4bit': 0, 'two_lines': 0x08, 'one_line': 0, 'font_5x10': 0x04, 'font_5x7': 0,
 	
-	'command' : False, 'data' : True,		
+	'command': False, 'data': True,		
 	
-	'delay' : 0.0015,	
+	'delay': 0.0015,	
 	
-	'clear' : 0x01, 'home': 0x02, 'cursor_move_direction' : 0x04, 'enable_display_cursor' : 0x08, 
-	'move_cursor_shift_display' : 0x10, 'set_interface_length' : 0x20, 'set_CGRAM_address': 0x40, 'set_DDRAM_address': 0x80,
+	'clear': 0x01, 'home': 0x02, 'cursor_move_direction': 0x04, 'enable_display_cursor': 0x08, 
+	'move_cursor_shift_display': 0x10, 'set_interface_length': 0x20, 'set_CGRAM_address': 0x40, 'set_DDRAM_address': 0x80,
 	
-	'second_line' : 0x40,
+	'second_line': 0x40,
 	
 	'custom_character0': 0x00, 'custom_character1': 0x01, 'custom_character2': 0x02, 'custom_character3': 0x03, 
 	'custom_character4': 0x04, 'custom_character5': 0x05, 'custom_character6': 0x06, 'custom_character7': 0x07
@@ -88,7 +88,7 @@ class LCD:
 		self.cursor_home()	
 		
 	def write(self, text, center = False):
-		if center == True:
+		if center is True:
 			text = self.center(text)
 		for char in text:
 			if char == '\n':
