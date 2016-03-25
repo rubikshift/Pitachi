@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import lcd
+import Pitachi as lcd
 import time
 
 display = lcd.LCD(lcd.settings['8bit'])
