@@ -4,11 +4,7 @@ import RPi.GPIO as GPIO
 import time
 
 #SETTINGS
-settings = {
-	'RS' : 21,					#pin RS
-	'E' : 20,					#pin E
-	'D' : [18, 23, 24, 25, 8, 7 ,12, 16],	 	#pins D7 - D0
-	
+settings = {	
 	'display_width' : 16,
 	
 	'increment' : 0x02, 'decrement' : 0, 'cursor_shift_on' : 0x01, 'cursor_shift_off': 0, 
@@ -45,44 +41,46 @@ example_custom_character = [
 
 #LCD
 class LCD:
-	mode = 0
-	lines = 0
-	font = 0
+	init = {'mode': 0, 'lines': 0, 'font': 0, 'display_width': 0}
+	pins = {'RS': 0, 'E': 0, 'D': 0}
 
-	def __init__(self, mode = settings['4bit'], lines = settings['two_lines'], font = settings['font_5x7']):
-		self.mode = mode
-		self.lines = lines
-		self.font = font
+	def __init__(self, RS, E, D, mode = settings['4bit'], lines = settings['two_lines'], font = settings['font_5x7'], display_width = 16):
+		self.init['mode'] = mode
+		self.init['lines'] = lines
+		self.init['font'] = font
+		self.init['display_width'] = display_width
+		self.pins['RS'] = RS
+		self.pins['E'] = E
+		self.pins['D'] = D
 		self.start()
 	
 	def start(self):
 		GPIO.setwarnings(False)
 		GPIO.setmode(GPIO.BCM)
-		GPIO.setup(settings['RS'], GPIO.OUT)
-		GPIO.setup(settings['E'], GPIO.OUT)
-		if self.mode == settings['8bit']:
+		GPIO.setup(self.pins['RS'], GPIO.OUT)
+		GPIO.setup(self.pins['E'], GPIO.OUT)
+		if self.init['mode'] == settings['8bit']:
 			for i in range(8):
-				GPIO.setup(settings['D'][i], GPIO.OUT)
+				GPIO.setup(self.pins['D'][i], GPIO.OUT)
 			self.init_lcd()
-		elif self.mode == settings['4bit']:
+		elif self.init['mode'] == settings['4bit']:
 			for i in range(4):
-				GPIO.setup(settings['D'][i], GPIO.OUT)
+				GPIO.setup(self.pins['D'][i], GPIO.OUT)
 			self.init_lcd()
 		else:
 			print("Unknown mode")
 
 	def init_lcd(self):
 		time.sleep(0.02)
-		#if self.mode == settings['8bit']:
 		self.cmd(0x30, settings['command'])		#1
 		time.sleep(0.005)
 		self.cmd(0x30, settings['command'])		#2
 		time.sleep(0.000160)
 		self.cmd(0x30, settings['command'])		#3
 		time.sleep(0.000160)
-		if self.mode == settings['4bit']:
+		if self.init['mode'] == settings['4bit']:
 			self.cmd(0x02, settings['command'])
-		self.set_interface_length(self.mode, self.lines, self.font)
+		self.set_interface_length(self.init['mode'], self.init['lines'], self.init['font'])
 		self.enable_display_cursor(settings['display_off'], settings['cursor_off'], settings['cursor_blink_off'])
 		self.clear()
 		self.move_cursor_shift_display(settings['display_shift_off'], settings['cursor_right'])
@@ -104,8 +102,8 @@ class LCD:
 		length = len(text)
 		if text[length - 1] == '\n':
 			length = length - 1
-		if length < settings['display_width']:
-			x = (settings['display_width'] - length) / 2
+		if length < self.init['display_width']:
+			x = (self.init['display_width'] - length) / 2
 			text = (" " * int(x)) + text
 		return text
 	
@@ -161,33 +159,33 @@ class LCD:
 		bits = settings['set_DDRAM_address']
 		bits = bits | address
 		self.cmd(bits, settings['command'])
-	
-	def cmd(self, bits, state):
+
+	def cmd(self, bits, state, check_busy_flag = True):
 		bits = bin(bits)[2:].zfill(8)
-		GPIO.output(settings['RS'], state)
-		if self.mode == settings['8bit']:
+		GPIO.output(self.pins['RS'], state)
+		if self.init['mode'] == settings['8bit']:
 			for i in range(8):
-				GPIO.output(settings['D'][i], False)
+				GPIO.output(self.pins['D'][i], False)
 			for i in range(8):
 				if bits[i] == "1":
-					GPIO.output(settings['D'][i], True)	
-			GPIO.output(settings['E'], True)
+					GPIO.output(self.pins['D'][i], True)	
+			GPIO.output(self.pins['E'], True)
 			time.sleep(settings['delay'])
-			GPIO.output(settings['E'], False)
-		if self.mode == settings['4bit']:
+			GPIO.output(self.pins['E'], False)
+		if self.init['mode'] == settings['4bit']:
 			for i in range(4):
-				GPIO.output(settings['D'][i], False)
+				GPIO.output(self.pins['D'][i], False)
 			for i in range(4):
 				if bits[i] == "1":
-					GPIO.output(settings['D'][i], True)
-			GPIO.output(settings['E'], True)
+					GPIO.output(self.pins['D'][i], True)
+			GPIO.output(self.pins['E'], True)
 			time.sleep(settings['delay'])
-			GPIO.output(settings['E'], False)
+			GPIO.output(self.pins['E'], False)
 			for i in range(4):
-				GPIO.output(settings['D'][i], False)
+				GPIO.output(self.pins['D'][i], False)
 			for i in range(4, 8):
 				if bits[i] == "1":
-					GPIO.output(settings['D'][i-4], True)
-			GPIO.output(settings['E'], True)
+					GPIO.output(self.pins['D'][i-4], True)
+			GPIO.output(self.pins['E'], True)
 			time.sleep(settings['delay'])
-			GPIO.output(settings['E'], False)
+			GPIO.output(self.pins['E'], False)

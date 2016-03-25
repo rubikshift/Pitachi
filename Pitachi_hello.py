@@ -2,7 +2,11 @@
 import Pitachi as lcd
 import time
 
-display = lcd.LCD(lcd.settings['8bit'])
+RS = 21
+E = 20
+D = [18, 23, 24, 25, 8, 7, 12, 16]
+
+display = lcd.LCD(RS, E, D)
 display.write('Hello! ')
 display.print_custom_character(lcd.settings['custom_character0'])
 time.sleep(10)
