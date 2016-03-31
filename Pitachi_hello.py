@@ -4,7 +4,7 @@ import time
 
 RS = 21
 E = 20
-D = [18, 23, 24, 25, 8, 7, 12, 16]
+D = [25, 24, 23, 18]
 
 display = lcd.LCD(RS, E, D)
 display.write('Hello! ')

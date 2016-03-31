@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import RPi.GPIO as GPIO
 import time
 
@@ -166,7 +164,7 @@ class LCD:
 				GPIO.output(self.pins['D'][i], False)
 			for i in range(8):
 				if bits[i] == "1":
-					GPIO.output(self.pins['D'][i], True)
+					GPIO.output(self.pins['D'][::-1][i], True)
 			GPIO.output(self.pins['E'], True)
 			time.sleep(settings['delay'])
 			GPIO.output(self.pins['E'], False)
@@ -175,7 +173,7 @@ class LCD:
 				GPIO.output(self.pins['D'][i], False)
 			for i in range(4):
 				if bits[i] == "1":
-					GPIO.output(self.pins['D'][i], True)
+					GPIO.output(self.pins['D'][::-1][i], True)
 			GPIO.output(self.pins['E'], True)
 			time.sleep(settings['delay'])
 			GPIO.output(self.pins['E'], False)
@@ -183,7 +181,7 @@ class LCD:
 				GPIO.output(self.pins['D'][i], False)
 			for i in range(4, 8):
 				if bits[i] == "1":
-					GPIO.output(self.pins['D'][i-4], True)
+					GPIO.output(self.pins['D'][::-1][i-4], True)
 			GPIO.output(self.pins['E'], True)
 			time.sleep(settings['delay'])
 			GPIO.output(self.pins['E'], False)
