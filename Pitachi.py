@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import RPi.GPIO as GPIO
 import time
 
@@ -38,7 +39,7 @@ example_custom_character = [
 # LCD
 class LCD:
 	init = {'mode': 0, 'lines': 0, 'font': 0, 'display_width': 0}
-	pins = {'RS': 0, 'E': 0, 'D': 0}
+	pins = {'RS': 0, 'RW': 'GND', 'E': 0, 'D': 0}
 
 	def __init__(self, RS, E, D, mode = settings['4bit'], lines = settings['two_lines'], font = settings['font_5x7'], display_width = 16):
 		self.init['mode'] = mode
@@ -64,7 +65,7 @@ class LCD:
 				GPIO.setup(self.pins['D'][i], GPIO.OUT)
 			self.init_lcd()
 		else:
-			print("Unknown mode")
+			print("Unknown mode!")
 
 	def init_lcd(self):
 		time.sleep(0.02)
@@ -156,6 +157,20 @@ class LCD:
 		bits = bits | address
 		self.cmd(bits, settings['command'])
 
+	def check_busy_flag(self):
+		GPIO.setup(self.pins['D'][::-1][0], GPIO.IN)
+		GPIO.output(self.pins['RW'], True)
+		busy_flag = GPIO.input(self.pins['D'][::-1][0])
+		while busy_flag == 1:
+			busy_flag = GPIO.input(self.pins['D'][::-1][0])
+		GPIO.output(self.pins['RW'], False)
+		GPIO.setup(self.pins['D'][::-1][0], GPIO.OUT, initial = False)
+
+	def enable(self):
+		GPIO.output(self.pins['E'], True)
+		time.sleep(settings['delay'])
+		GPIO.output(self.pins['E'], False)
+
 	def cmd(self, bits, state):
 		bits = bin(bits)[2:].zfill(8)
 		GPIO.output(self.pins['RS'], state)
@@ -165,23 +180,34 @@ class LCD:
 			for i in range(8):
 				if bits[i] == "1":
 					GPIO.output(self.pins['D'][::-1][i], True)
-			GPIO.output(self.pins['E'], True)
-			time.sleep(settings['delay'])
-			GPIO.output(self.pins['E'], False)
+			self.enable()
 		if self.init['mode'] == settings['4bit']:
 			for i in range(4):
 				GPIO.output(self.pins['D'][i], False)
 			for i in range(4):
 				if bits[i] == "1":
 					GPIO.output(self.pins['D'][::-1][i], True)
-			GPIO.output(self.pins['E'], True)
-			time.sleep(settings['delay'])
-			GPIO.output(self.pins['E'], False)
+			self.enable()
 			for i in range(4):
 				GPIO.output(self.pins['D'][i], False)
 			for i in range(4, 8):
 				if bits[i] == "1":
 					GPIO.output(self.pins['D'][::-1][i-4], True)
-			GPIO.output(self.pins['E'], True)
-			time.sleep(settings['delay'])
-			GPIO.output(self.pins['E'], False)
+			self.enable()
+
+if __name__ == "__main__":
+	RS = 21
+	E = 20
+	D = [25, 24, 23, 18]
+	
+	display = LCD(RS, E, D, settings['4bit'])
+	display.write('Hello! ')
+	display.print_custom_character(settings['custom_character0'])
+	time.sleep(5)
+	display.clear()
+	while True:
+		display.write(time.strftime("%H:%M:%S"), True)
+		display.go_to_second_line()
+		display.write(time.strftime("%d %b %Y"), True)
+		time.sleep(1) 
+		display.set_DDRAM_address(0)
