@@ -157,15 +157,6 @@ class LCD:
 		bits = bits | address
 		self.cmd(bits, settings['command'])
 
-	def check_busy_flag(self):
-		GPIO.setup(self.pins['D'][::-1][0], GPIO.IN)
-		GPIO.output(self.pins['RW'], True)
-		busy_flag = GPIO.input(self.pins['D'][::-1][0])
-		while busy_flag == 1:
-			busy_flag = GPIO.input(self.pins['D'][::-1][0])
-		GPIO.output(self.pins['RW'], False)
-		GPIO.setup(self.pins['D'][::-1][0], GPIO.OUT, initial = False)
-
 	def enable(self):
 		GPIO.output(self.pins['E'], True)
 		time.sleep(settings['delay'])
